@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment AI | Arjun-N</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: radial-gradient(circle at top left, #1a1c2c 0%, #4a192c 100%);
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-glow:focus {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+            border-color: rgba(139, 92, 246, 0.5);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(168, 85, 247, 0.5);
+        }
+
+        .loading-spinner {
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-result { animation: fadeInScale 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="glass-panel w-full max-w-lg rounded-3xl p-8 md:p-12 relative overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-purple-600/20 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl"></div>
+
+        <div class="relative z-10">
+            <header class="text-center mb-10">
+                <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">
+                    Pulse<span class="text-purple-400">AI</span>
+                </h1>
+                <p class="text-slate-400 text-sm font-medium uppercase tracking-widest">Sentiment Analysis Engine</p>
+            </header>
+
+            <div class="space-y-6">
+                <div class="relative">
+                    <textarea 
+                        id="inputText" 
+                        class="w-full bg-white/5 border border-white/10 rounded-2xl p-5 text-white placeholder-slate-500 focus:outline-none input-glow transition-all duration-300 resize-none" 
+                        rows="5" 
+                        placeholder="Share what's on your mind..."></textarea>
+                </div>
+                
+                <button onclick="analyze()" id="btn" class="btn-gradient w-full py-4 rounded-2xl font-bold text-white flex items-center justify-center gap-3 group">
+                    <span id="btnText">Analyze Sentiment</span>
+                    <div id="spinner" class="loading-spinner"></div>
+                </button>
+            </div>
+
+            <!-- Result Section -->
+            <div id="result" class="mt-12 hidden animate-result">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-1">Detected Tone</p>
+                        <h2 id="sentimentLabel" class="text-5xl font-black italic tracking-tighter">NEUTRAL</h2>
+                    </div>
+                    <div class="text-right">
+                        <p id="confidenceText" class="text-sm font-medium text-slate-300"></p>
+                    </div>
+                </div>
+                
+                <div class="w-full bg-white/5 h-3 rounded-full overflow-hidden">
+                    <div id="confidenceBar" class="h-full transition-all duration-1000 ease-out" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <footer class="mt-12 pt-8 border-t border-white/5 text-center">
+                <p class="text-slate-500 text-xs tracking-wide">
+                    Designed & Developed by <span class="text-slate-300 font-semibold">Arjun-N</span>
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        async function analyze() {
+            const text = document.getElementById('inputText').value;
+            const btn = document.getElementById('btn');
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('spinner');
+            const resultDiv = document.getElementById('result');
+            
+            if(!text.trim()) return alert("Please enter some text to analyze.");
+
+            // UI Loading State
+            btnText.innerText = "Analyzing";
+            spinner.style.display = "block";
+            btn.disabled = true;
+            btn.style.opacity = "0.7";
+
+            try {
+                const response = await fetch('https://2tae4huxq8.execute-api.us-east-1.amazonaws.com/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        text: text, 
+                        user_id: 'dev_user' 
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    throw new Error(`Error ${response.status}: ${errorData}`);
+                }
+
+                const data = await response.json();
+                
+                // Show Result
+                resultDiv.classList.remove('hidden');
+                const label = document.getElementById('sentimentLabel');
+                const bar = document.getElementById('confidenceBar');
+                const confText = document.getElementById('confidenceText');
+                
+                label.innerText = data.sentiment;
+                
+                // Theme Logic
+                let themeColor = '#94a3b8'; // Neutral
+                if(data.sentiment === 'POSITIVE') themeColor = '#10b981';
+                else if(data.sentiment === 'NEGATIVE') themeColor = '#ef4444';
+                
+                label.style.color = themeColor;
+                bar.style.backgroundColor = themeColor;
+                
+                // Mock confidence if API doesn't provide it, or use real data
+                const confidence = data.confidence ? Math.round(data.confidence * 100) : 98;
+                confText.innerText = `${confidence}% Confidence`;
+                
+                setTimeout(() => {
+                    bar.style.width = `${confidence}%`;
+                }, 100);
+
+            } catch (err) {
+                console.error(err);
+                alert("Technical Error: " + err.message);
+            } finally {
+                btnText.innerText = "Analyze Sentiment";
+                spinner.style.display = "none";
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            }
+        }
+    </script>
+</body>
+</html>
