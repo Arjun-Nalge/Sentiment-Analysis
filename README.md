@@ -3,12 +3,12 @@
 PulseAI is a full-stack serverless application that analyzes the emotional tone of text input. It uses a custom-weighted heuristic algorithm to determine if a statement is **Positive, Negative, or Neutral**, stores the results in a NoSQL database, and displays them through a high-performance, modern web interface.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20API%20Gateway%20%7C%20DynamoDB-orange)
+![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20API%20Gateway%20%7C%20DynamoDB%20%7C%20S3-orange)
 
 ## 🚀 Live Architecture Flow
 The application follows a modern serverless event-driven architecture:
 
-1.  **Frontend**: A Tailwind CSS-powered UI hosted (e.g., S3/Vercel) sends a JSON payload via `POST`.
+1.  **Frontend**: Hosted UI on S3 sends a JSON payload via `POST`.
 2.  **API Gateway**: Acts as the entry point, routing the request and handling CORS.
 3.  **AWS Lambda**:
     *   Processes the text using a **Weighted Heuristic Engine**.
