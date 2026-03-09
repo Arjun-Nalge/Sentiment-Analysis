@@ -17,6 +17,12 @@ The application follows a modern serverless event-driven architecture:
 4.  **DynamoDB**: Persists the analysis result, timestamp, and UserID for historical tracking.
 5.  **Response**: The UI receives the sentiment score and dynamically updates the "Pulse" bar and theme.
 
+## Author
+Arjun Nalge - DevOps Engineer
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/arjun-nalge-313642398)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?logo=github)](https://github.com/Arjun-Nalge/Arjun-Nalge.git)
+
 ```mermaid
 graph LR
     A[User Browser] -->|POST Request| B(AWS API Gateway)
@@ -27,8 +33,4 @@ graph LR
     C -->|JSON Response| B
     B -->|UI Update| A
 
-## Author
-Arjun Nalge - DevOps Engineer
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?logo=linkedin)](https://www.linkedin.com/in/arjun-nalge-313642398)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?logo=github)](https://github.com/Arjun-Nalge/Arjun-Nalge.git)
