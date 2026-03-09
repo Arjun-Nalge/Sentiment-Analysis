@@ -3,7 +3,6 @@
 PulseAI is a full-stack serverless application that analyzes the emotional tone of text input. It uses a custom-weighted heuristic algorithm to determine if a statement is **Positive, Negative, or Neutral**, stores the results in a NoSQL database, and displays them through a high-performance, modern web interface.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
 ![AWS](https://img.shields.io/badge/AWS-Lambda%20%7C%20API%20Gateway%20%7C%20DynamoDB-orange)
 
 ## 🚀 Live Architecture Flow
